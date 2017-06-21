@@ -18,7 +18,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     </spring:beans>
     <cors:config name="corsConfig" doc:name="Simple CORS Config" >
         <cors:origins>
-            <cors:origin url="http://localhost:8080" accessControlMaxAge="30">
+            <cors:origin url="${cors-allowed-url}" accessControlMaxAge="30">
                 <cors:methods>
                     <cors:method>GET</cors:method>
                 </cors:methods>
