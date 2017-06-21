@@ -33,7 +33,7 @@ Note: A log file will be created in <mule src root, not app src root>/.mule/logs
 Running WebUI
 --------------------------------
 1) Open a browser, navigate to the destination URL. Since the page is index.html it should run without explicitly calling the page.
-2) Enter numbers (or don't) for lower and upper and clikc "Convert Range" for results.
+2) Enter numbers (or don't) for lower and upper and click "Convert Range" for results.
 3) When a result set is available, the "Reverse Results" button is enabled, click it to toggle the order between ASC and DESC.
 
 Accessing WebAPI from Browser
