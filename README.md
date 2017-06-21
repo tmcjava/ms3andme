@@ -25,7 +25,7 @@ Running WebAPI
 1) Open "ms3andme-api" in AnyPoint Studio
 2) The current logging level is set to DEBUG. This allows some logging to track when the API is called and a little about what was returned. To change this open "log4j2.xml" in the "src/main/resources" folder of the project and change the following line to INFO instead of DEBUG:
         <AsyncLogger name="com.ms3.ms3andme" level="DEBUG" />
-3) The WebAPI will run on localhost:8091 and allows access from localhost:8080 (my Tomcat instance). If you will be running the webpage from another server/port you will need to update the following line in the "mule-app.properties" in the "src/main/app" folder of the project:
+3) The WebAPI will run on localhost:8091 and allows access from localhost:8080 (my Tomcat instance). If you will be running the webpage from another server you will need to update the following line in the "mule-app.properties" in the "src/main/app" folder of the project:
         cors-allowed-url=http://localhost:8080
 4) Right click the main project folder and select Run As..->Mule Application
 Note: A log file will be created in <mule src root, not app src root>/.mule/logs/ms3andme-api.log, but you can also monitor the console log for activity.
