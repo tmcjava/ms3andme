@@ -8,8 +8,9 @@ import org.mule.api.annotations.Transformer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ConvertedPairs {
-	
+// Wrapper class for list of ConvertedPairs
+public class ConvertedPairs 
+{
 	private List<ConvertedPair> convertedPairs;
 	
 	public ConvertedPairs()
@@ -22,12 +23,14 @@ public class ConvertedPairs {
 		return convertedPairs;
 	}
 	
+	// Adds a ConverterPair to the list if it's not already there
 	public void addConvertedPair(ConvertedPair convertedPair)
 	{
 		if(!convertedPairs.contains(convertedPair))
 			convertedPairs.add(convertedPair);
 	}
 	
+	// Called by the Mule flow to get the results in JSON
     @Transformer(resultMimeType = "application/json")
     public String toJson(ConvertedPairs convertedPairs) throws IOException 
     {

@@ -4,9 +4,11 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+// Basic POJ that has been annotized to allow JSON formating
 @JsonAutoDetect
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class ConvertedPair {
+public class ConvertedPair 
+{
 	private String key;
 	private String value;
 	
