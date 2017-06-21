@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:cors="http://www.mulesoft.org/schema/mule/cors"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+	xmlns="http://www.mulesoft.org/schema/mule/core" 
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" 
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    <http:listener-config name="ms3andme-api-httpListenerConfig" host="0.0.0.0" port="8091" doc:name="HTTP Listener Configuration"/>
+    <apikit:config name="ms3andme-api-config" raml="ms3andme-api.raml" consoleEnabled="false" doc:name="Router"/>
+    <spring:beans>
+        <spring:bean class="com.ms3.ms3andme.ConverterAPI" id="converter-api" init-method="initialize"/>
+    </spring:beans>
+    <cors:config name="corsConfig" doc:name="Simple CORS Config" >
+        <cors:origins>
+            <cors:origin url="http://localhost:8080" accessControlMaxAge="30">
+                <cors:methods>
+                    <cors:method>GET</cors:method>
+                </cors:methods>
+                <cors:headers>
+                    <cors:header>X-Allow-Origin</cors:header>
+                </cors:headers>
+            </cors:origin>
+        </cors:origins>
+    </cors:config>
+    <flow name="ms3andme-api-main">
+        <http:listener config-ref="ms3andme-api-httpListenerConfig" path="/api/*" doc:name="HTTP" responseStreamingMode="ALWAYS"/>
+        <cors:validate config-ref="corsConfig" acceptsCredentials="false" publicResource="true" doc:name="CORS Validate"/>
+        <apikit:router config-ref="ms3andme-api-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="ms3andme-api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="ms3andme-api-console">
+        <http:listener config-ref="ms3andme-api-httpListenerConfig" path="/console/*" doc:name="HTTP"/>
+        <apikit:console config-ref="ms3andme-api-config" doc:name="APIkit Console"/>
+    </flow>
+    <flow name="get:/ms3andme:ms3andme-api-config">
+        <expression-component doc:name="Call API"><![CDATA[payload = app.registry['converter-api'].getConvertedPairs(message.inboundProperties['http.query.params'].lower,message.inboundProperties['http.query.params'].upper)]]></expression-component>
+
+    </flow>
+    <apikit:mapping-exception-strategy name="ms3andme-api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;#[groovy:message.getExceptionPayload().getRootException().getMessage()]&quot;  }" doc:name="Set Payload"/>
+        </apikit:mapping>    </apikit:mapping-exception-strategy>
+</mule>

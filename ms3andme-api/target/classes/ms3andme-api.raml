@@ -1,0 +1,74 @@
+#%RAML 0.8
+---
+title: MS3 and ME Technical Challenge
+version: 1.0
+baseUri: http://localhost:8090/api
+mediaType: application/json
+documentation:
+  - title: Introduction
+    content: |
+      API to converts each number in a range. Multiples of 7 convert to â€œMS3â€�, multiples of 3 convert to â€œMEâ€�, and multiples of both 7 and 3 convert to â€œMS3 and MEâ€�
+/ms3andme:
+  displayName: MS3andME
+  get:
+    queryParameters:
+      lower:
+        type: integer
+        minimum: 1
+        maximum: 200
+        required: true
+        example: 3
+      upper:
+        type: integer
+        minimum: 1
+        maximum: 200
+        required: true
+        example: 7
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              {
+                "$schema": "http://json-schema.org/draft-03/schema",
+                  "items": {
+                    "name": "pair",
+                    "properties": {
+                      "key": {
+                        "description": "Number in the range",
+                        "type": "string",
+                        "required": true
+                      },
+                      "value": {
+                        "description": "Converted value for the number",
+                        "type": "string",
+                        "required": true
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "name": "Pairs",
+                  "required": true,
+                  "type": "array"
+              }
+            example: |
+              [{
+                "key": "3",
+                "value": "ME"
+              },
+              {
+                "key": "4",
+                "value": "4"
+              },
+              {
+                "key": "5",
+                "value": "5"
+              },
+              {
+                "key": "6",
+                "value": "ME"
+              },
+              {
+                "key": "7",
+                "value": "MS3"
+              }]
