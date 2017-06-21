@@ -25,7 +25,9 @@ Installation
 Running WebAPI
 --------------------------------
 1) Open "ms3andme-api" into AnyPoint Studio
-2) Right click the main project folder and select Run As..->Mule Application
+2) The current logging level is set to DEBUG. This allows some logging to track when the API is called and a little about what was returned. To change this open "log4j2.xml" in the "src/main/resources" folder of the project and change the following line to INFO instead of DEBUG:
+        <AsyncLogger name="com.ms3.ms3andme" level="DEBUG" />
+3) Right click the main project folder and select Run As..->Mule Application
     Note: A log file will be created in <mule src root, not app src root>/.mule/logs/ms3andme-api.log, but you can also monitor the console log for activity.
     
 
