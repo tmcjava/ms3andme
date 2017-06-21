@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+	
+		<script type="text/javascript">
+			var apiUrl = "http://localhost:8091/api/ms3andme";
+			var orderBy = "asc";
+			
+			function clearResults()
+			{
+				enableReverseButton(false);
+				
+				document.getElementById("errorMsg").innerHTML = "";
+				document.getElementById("resultsHeader").innerHTML = "";
+				document.getElementById("results").innerHTML = "";
+				document.getElementById("jsonResults").innerHTML = "";
+			}
+			
+			function enableReverseButton(enable)
+			{
+				document.getElementById("btn_reverse").disabled = !enable;
+			}
+			
+			function convertNumbers()
+			{
+				var lower = document.getElementById("lower").value;
+				var upper = document.getElementById("upper").value;
+
+				clearResults();
+				
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() 
+				{
+					if (this.readyState == 4)
+					{
+						if (this.status == 200) 
+							reportResults(this);
+						else
+							reportError(this);
+					}
+					
+				};
+				xhr.open("GET", apiUrl + "?lower=" + lower + "&upper=" + upper);
+				xhr.send();
+			}
+			
+			function reportResults(rsp)
+			{
+				// Insert headerRow in THEAD
+				addHeaderRow();
+
+				// Report Results in ascending order first time
+				reportResultsAsc(rsp.responseText);
+
+				// Display JSON response
+				reportJSON(rsp.responseText);
+
+				enableReverseButton(true);
+			}
+			
+			function reverseResults()
+			{
+				if(orderBy == "asc")
+					reportResultsDesc(document.getElementById("jsonResults").innerHTML);
+				else
+					reportResultsAsc(document.getElementById("jsonResults").innerHTML);
+			}
+			
+			function reportResultsAsc(jsonText)
+			{
+				// Clear results area, just in case
+				document.getElementById("results").innerHTML = "";
+
+				// Construct table rows from json, starting from the bottom
+				var json = JSON.parse(jsonText);
+				var tableRows = "";
+				for(var i = 0; i < json.convertedPairs.length; ++i)
+				{
+					tableRows += "<tr><td>"+json.convertedPairs[i].key+"</td><td>"+json.convertedPairs[i].value+"</td></tr>";
+				}
+				
+				// Add rows to the table in TBODY
+				addTableRows(tableRows);
+				
+				orderBy = "asc";
+			}
+			
+			function reportResultsDesc(jsonText)
+			{
+				// Clear results area, just in case
+				document.getElementById("results").innerHTML = "";
+
+				// Construct table rows from json, starting from the bottom
+				var json = JSON.parse(jsonText);
+				var tableRows = "";
+				for(var i = json.convertedPairs.length - 1; i >= 0; --i)
+				{
+					tableRows += "<tr><td>"+json.convertedPairs[i].key+"</td><td>"+json.convertedPairs[i].value+"</td></tr>";
+				}
+				
+				// Add rows to the table in TBODY
+				addTableRows(tableRows);
+				
+				orderBy = "desc";
+			}
+			
+			function reportJSON(jsonText)
+			{
+				document.getElementById("jsonResults").innerHTML = jsonText;
+			}
+			
+			function reportError(rsp)
+			{
+				var parsedJSON = JSON.parse(rsp.responseText);
+				document.getElementById("errorMsg").innerHTML = parsedJSON.message;
+				
+				reportJSON(rsp);
+			}
+			
+			// Insert header row in THEAD, dynamic to make the UI a little nicer. No sense in having headers without data.
+			function addHeaderRow()
+			{
+				var headerRow = "<tr><th style='border: 1px solid black'>Key</th><th style='border: 1px solid black'>Value</th><tr>";
+				document.getElementById("resultsHeader").innerHTML = headerRow;
+			}
+			
+			function addTableRows(tableRows)
+			{
+				document.getElementById("results").innerHTML = tableRows;
+			}
+		</script>
+	</head>
+  
+  <body>
+	<div>
+		<div style="font-weight:bold">Enter Lower and Upper numbers for define a range of numbers to be converted, then click "Convert Range" for results.</div>
+
+		<noscript>
+			<div>JavaScript is either disabled or not supported in your browser. Please enable it or use a JavaScript enabled browser.</div>
+		</noscript>
+		<br/>
+
+		<table style="border-collapse: separate;">
+		<tr>
+			<th>Lower</th>
+			<th>Upper</th>
+		</tr>
+		<tr>
+			<td><input id="lower" type="text" placeholder="e.g., 1" /></td>
+			<td><input id="upper" type="text" placeholder="e.g., 200" /></td>
+		</tr>
+		<tr>
+			<td colspan=2 style="padding-top: 1em;text-align:right;">
+				<input id="btn_convert" type="button" onclick="convertNumbers()" Value="Convert Range"/>
+				<input id="btn_reverse" type="button" onclick="reverseResults()" Value="Reverse Results" disabled />
+			<td>
+		</tr>
+		</table>
+		
+		<br/>
+		<p style="font-weight:bold">Numeric Conversions:</p>
+		<p id="errorMsg"/>
+		<table>
+		<thead id="resultsHeader"></thead>
+		<tbody id="results"></tbody>
+		</table>
+		<br/>
+		<p style="font-weight:bold">JSON Response:</p>
+ 		<div id="jsonResults">
+		</div>
+    </div>
+
+  </body>
+
+</html>

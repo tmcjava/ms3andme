@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ms3andm3-site" default="Publish" basedir="."> 
+	<!-- Source File to be Published, should not need to be changed -->
+	<property name="src" value="WebContent/index.html"/>
+	<!-- Destination Directory, should be changed to match local location of Tomcat -->
+	<property name="dest" value="/Dev.Apps/apache-tomcat-8.5.15/webapps/ms3andme"/>
+	<target name="Publish">
+		<mkdir dir="${dest}"/>
+		<copy file="${src}" todir="${dest}"/>
+	</target>
+</project>
