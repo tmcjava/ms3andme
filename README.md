@@ -31,6 +31,6 @@ Running WebAPI
 
 Running Website
 --------------------------------
-1) Open a browser, navigate to the destination URLTechnical Challenge Project for Mountain State Software Solutions
+1) Open a browser, navigate to the destination URL. Since the page is index.html it should run without explicitly calling the page.
 2) Enter numbers (or don't) for lower and upper and clikc "Convert Range" for results.
 3) When a result set is available, the "Reverse Results" button is enabled, click it to toggle the order between ASC and DESC.
